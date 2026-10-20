@@ -1,0 +1,507 @@
+/* ============================================================
+   TAT ARA — minimal, monospace, mobile-first
+   Blanco y negro: el color solo llega con las fotos. Un solo cuerpo de
+   letra, sin negritas; los títulos van en mayúscula y lo que se quiere
+   resaltar se subraya.
+   ============================================================ */
+
+/* El texto: JetBrains Mono 400 (licencia OFL), servida desde aquí y no desde
+   Google Fonts, para no pasarle a Google la IP de cada visita. Dos trozos,
+   como los cortaba Google: el navegador solo baja latin-ext si hace falta. */
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../fonts/JetBrainsMono-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../fonts/JetBrainsMono-latin-ext-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Solo la usa el logo TAT ARA, en Bold (lineto.com/typefaces/superstudio). */
+@font-face {
+  font-family: "Superstudio Trial";
+  src: url("../fonts/SuperstudioTrialTT-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  color-scheme: only light; /* negro-sobre-blanco: opt-out del auto-oscurecido del navegador (iOS/Chrome force-dark) */
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-display: "Superstudio Trial", "JetBrains Mono", ui-monospace, monospace;
+
+  /* Los COLORES no viven aquí: están todos en data/site.json → "theme"
+     (--bg, --ink, --overlay-ink…) y los inyecta js/main.js al arrancar. */
+
+  /* Tipografía: UN solo cuerpo (--fs) y UN solo interlineado (--lh) para toda
+     la web. La única excepción es la lista de exposiciones (--lh-list), que
+     tiene poco texto. En escritorio el cuerpo crece con la columna central
+     para que quepan unos 72 caracteres por línea, como en la maqueta. */
+  --fs: 12px;
+  --lh: 1.4;
+  --lh-list: 1.7;
+
+  --bar-h: 52px;
+  --gutter: 16px;  /* margen exterior; en escritorio, 40px */
+  --brand: 1.8rem; /* cuerpo de TAT ARA: en móvil 1,8 veces el texto, en escritorio 3,3 */
+  --brand-c: calc(var(--bar-h) / 2);   /* del borde de la pantalla al centro de TAT (o de ARA) */
+  --fade: 180ms;   /* duración del fundido entre vistas; la lee también el router (JS) */
+  --intro: 0;      /* bienvenida: 1 = al empezar, 0 = TAT y ARA en sus barras (js/intro.js) */
+  --screen-h: 100vh;
+}
+@supports (height: 100dvh) { :root { --screen-h: 100dvh; } }   /* iOS < 15.4 no tiene dvh */
+.intro { --intro: 1; }
+
+* { box-sizing: border-box; text-decoration-thickness: 1px; }   /* el subrayado, del mismo grueso que hilos y cruces */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg, #ffffff);   /* el fallback solo se ve el instante */
+  color: var(--ink, #111111);      /* previo a que cargue site.json */
+  font-family: var(--font-mono);
+  font-size: var(--fs);
+  line-height: var(--lh);
+  text-underline-offset: 0.2em;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;   /* sin el "estirón" blanco al pasarse de arriba o de abajo */
+}
+/* Ni negritas ni tamaños propios en los títulos: todo hereda el cuerpo. */
+h1, h2, h3, b, strong { font: inherit; }
+body.no-scroll { overflow: hidden; }
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
+
+/* Lo clicable se subraya al pasar por encima (nunca negrita ni color). */
+a:not(.bar__brand):hover, a:not(.bar__brand):focus-visible,
+.bar__menu:hover, .bar__section:hover, .bar__lang:hover,
+.bar__langs button:hover, .menu__langs button:hover, .langmodal__list button:hover,
+.product:hover .product__title { text-decoration: underline; }
+
+#view {
+  min-height: 100dvh;
+  padding-inline: var(--gutter);
+  padding-top: var(--bar-h);
+  padding-bottom: var(--bar-h);
+  opacity: 1;
+  transition: opacity var(--fade) ease;
+}
+#view.view--fade { opacity: 0; }
+
+.loading { padding: 3rem 0; }
+
+/* ============================================================
+   AGENDA
+   ============================================================ */
+.agenda__strip { display: flex; flex-direction: column; padding-bottom: 30dvh; }
+
+/* Una entrada por exposición, separadas por un hilo negro (1px, como todos)
+   con 2rem de aire a cada lado. */
+.seg {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0 0 2rem;
+  margin: 0 0 2rem;
+  border-bottom: 1px solid var(--ink);
+}
+
+/* Cabecera, pie y fila de cada O.R.: texto a la izquierda, fechas o tipo a la
+   derecha, en la misma línea. */
+.seg__label, .seg__foot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.seg__title { min-width: 0; }   /* sin truncar: el título puede ocupar varias líneas */
+.seg__when, .seg__kind { flex: 0 0 auto; margin-left: auto; }   /* a la derecha aunque falte lo de la izquierda */
+
+.seg__desc, .seg__child-desc { margin: 0; }
+
+.seg .zoom { width: 60%; margin-block: 1rem; }   /* en la agenda, 3/5 de la columna y con aire */
+.seg .zoom--right { align-self: flex-end; }      /* y alternando: izquierda, derecha, izquierda… */
+
+/* O.R. / esdeveniments anidados dentro de una exposición. */
+/* Entre O.R., y entre la descripción del bloque y el primero: la mitad del
+   hueco entre bloques (2rem = 1rem de gap de .seg + 1rem de margen). */
+.seg__days { display: flex; flex-direction: column; gap: 2rem; margin-top: 1rem; }
+.seg__child { display: flex; flex-direction: column; gap: 0.5rem; }
+/* Fecha y nombre en un solo flujo de texto, NO en flex: al partirse el nombre,
+   la segunda línea vuelve al margen y no cuelga de la fecha. */
+.seg__child-when { white-space: nowrap; margin-right: 0.6rem; }   /* "12/9 – 13/9   10:00" no se parte */
+
+/* Imagen ampliable (utils.zoomImg): agenda, recerca y expos. aspect-ratio con
+   'auto' delante: manda la proporción real en cuanto se conoce, y mientras
+   tanto reserva 3/2, así la página no crece de golpe bajo el dedo. */
+.zoom { display: block; width: 100%; padding: 0; cursor: zoom-in; }
+.zoom img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2 auto; background: var(--img-placeholder); }
+
+/* Lightbox: clic en una imagen ampliable la abre a pantalla completa.
+   La imagen se limita a vw/svh para caber ENTERA (alto y ancho) en cualquier
+   pantalla; el clic fuera cierra (cursor zoom-out), el clic en la imagen no. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: var(--lightbox-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  cursor: zoom-out;
+}
+.lightbox__img {
+  max-width: 92vw;
+  max-height: 92svh;
+  width: auto;
+  height: auto;
+  cursor: default;
+}
+.lightbox__close {
+  position: absolute;
+  top: 0.8rem;
+  right: 1rem;
+  z-index: 1;
+  line-height: 0;
+  padding: 0.3rem;
+  color: var(--overlay-ink);
+}
+.lightbox__close svg { width: 34px; height: 34px; display: block; }
+
+/* ============================================================
+   PÁGINAS DE CONTENIDO (todo lo que no es la agenda)
+   ============================================================ */
+.page {
+  min-height: calc(100dvh - 2 * var(--bar-h));
+  display: flex;
+  flex-direction: column;
+}
+
+/* Las secciones con poco contenido (contacte, newsletter, carret vacío o el
+   "gràcies" después de pagar) no se quedan arriba a la izquierda: van centradas
+   en el hueco que queda entre las barras, en las dos direcciones. margin-block
+   auto dentro de .page (flex en columna) es lo que las centra en vertical. */
+.contact, .newsletter, .cart:not(.cart--full) {
+  margin-block: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.contact__intro, .newsletter__intro { text-wrap: balance; }   /* líneas de largo parecido, sin una palabra suelta al final */
+
+.prose p { margin: 0 0 1rem; }
+.prose__heading { margin: 2rem 0 0.8rem; }
+.prose > .prose__heading:first-child { margin-top: 0; }
+
+/* Enlaces internos dentro del texto (sintaxis [etiqueta](seccio) en los JSON).
+   Todo es negro, así que el enlace se distingue por el subrayado. */
+.link-inline { text-decoration: underline; }
+
+/* Logos de colaboradores al final de nosaltres. */
+.prose .prose__img { margin: 0.4rem 0 1rem; }
+.prose__img img { width: 190px; max-width: 60%; height: auto; }
+
+/* "Amb: nom, nom, nom." — la lista de personas de recerca. */
+.prose__people { margin: 1.4rem 0 0; }
+
+/* Galería de una página de texto (recerca): fotos apiladas, ancho de columna. */
+.prose__gallery { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.4rem 0 0; }
+
+/* Exposicions: "ARTISTA, Nom de l'expo", una por línea, sin marco ni fondo.
+   Es la única lista con interlineado propio (--lh-list): tiene poco texto. */
+.people { list-style: none; margin: 0; padding: 0; line-height: var(--lh-list); }
+.person-spacer { height: 2.4rem; }
+
+/* Ficha de una exposición, dentro de la columna. */
+.expo p { margin: 0 0 1rem; }
+.expo .zoom { margin: 0 0 1rem; clear: right; }   /* las fotos, siempre por debajo de la cruz */
+/* La cruz flota a la derecha: el título empieza arriba, a su lado, sin una línea vacía encima. */
+.expo__close { float: right; width: max(var(--brand), 2.4rem); margin: 0 0 1rem 1rem; line-height: 0; }
+.expo__close svg { width: 100%; height: auto; }
+.expo__title { margin: 0 0 1rem; text-decoration: underline; }
+
+/* Botiga: hasta dos fichas por fila, y una sola cuando la columna es tan
+   estrecha que el título quedaría en una tira de pocas letras. La foto, entera
+   y a su proporción, sin caja detrás (cada foto ya trae su fondo de estudio). */
+.shop { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(max(14rem, 40%), 1fr)); gap: 2.4rem; align-items: start; }
+.product { display: flex; flex-direction: column; gap: 0.6rem; width: 100%; padding: 0; text-align: left; }
+.product__img { display: block; width: 100%; height: auto; }
+.product__info { display: grid; grid-template-columns: 1fr auto; gap: 1rem; }
+.product__text { display: flex; flex-direction: column; min-width: 0; }
+
+/* Contacte, de arriba abajo y centrado: texto de intro, axonometría del local,
+   dirección + correo + los 3 links (IG · Newsletter · Medium). */
+.contact { gap: 2rem; }
+.contact__intro { margin: 0; }
+.contact__axo { display: block; max-width: 16rem; max-height: 30svh; width: auto; height: auto; }
+.contact__info { margin: 0; }
+.contact__addr { margin: 0 0 0.4rem; }
+.contact__email { margin: 0 0 1.4rem; }
+.contact__links { margin: 0; display: flex; justify-content: center; gap: 1.6rem; }
+.contact__credit { margin: 1.4rem 0 0; font-size: max(0.8em, 10px); }   /* quién hizo la web: más pequeño, debajo */
+
+/* Newsletter (secció pròpia): intro + alta al butlletí */
+.newsletter { gap: 1.4rem; }
+.newsletter__intro { max-width: 30rem; margin: 0; }
+.newsletter__form { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.newsletter__input { font: inherit; border: 1px solid var(--ink); background: none; padding: 0.45rem 0.7rem; min-width: 13rem; text-align: center; }
+.newsletter__btn { border: 1px solid var(--ink); padding: 0.45rem 1rem; }
+.newsletter__btn:not(:disabled):hover { background: var(--ink); color: var(--bg); }
+.newsletter__btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.newsletter__feedback { min-height: 1.2em; margin: 0; }
+
+/* Carret */
+.cart--full { width: 100%; }
+.cart-items { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.2rem; }
+.cart-item { display: grid; grid-template-columns: 3rem 1fr 4rem auto; gap: 0.7rem; align-items: center; }
+.cart-item__img { width: 3rem; height: 3rem; object-fit: cover; }
+.cart-item__qty { width: 3.4rem; border: 1px solid var(--ink); background: none; padding: 0.25rem 0.3rem; text-align: center; font: inherit; }
+.cart-item__price { justify-self: end; white-space: nowrap; }
+.cart-item__remove { margin-left: 0.4rem; }
+.cart__total { display: flex; justify-content: space-between; border-top: 1px solid var(--ink); padding-top: 0.8rem; margin-bottom: 1.2rem; }
+.cart__zone { display: block; margin-bottom: 0.3rem; }
+.cart__zone select { font: inherit; border: 1px solid var(--ink); background: none; padding: 0.25rem 0.4rem; margin-left: 0.5rem; }
+.cart__zone-note { margin: 0 0 1rem; }
+.cart__pay { margin-top: 0.4rem; }
+.cart__feedback { min-height: 1.2em; margin: 0.7rem 0 0; }
+.cart__back { margin-top: 1.6rem; }
+.cart__thanks-title { margin: 0 0 1rem; }
+
+/* ============================================================
+   TÍTULOS EN MAYÚSCULA · LO ACTIVO, SUBRAYADO
+   ============================================================ */
+.bar__menu, .bar__section, .bar__lang, .bar__langs button,
+.menu__title, .menu__list a, .menu__langs button, .langmodal__list button,
+.prose__heading, .m-title, .cart__thanks-title, .cart-item__title,
+.seg__title, .seg__artist, .seg__kind, .seg__end, .seg__child-name,
+.person__name, .product__title { text-transform: uppercase; }
+
+.bar__langs button.is-active,
+.menu__langs button.is-active, .langmodal__list button.is-active { text-decoration: underline; }
+
+/* ============================================================
+   BARRAS FIJAS  —  marco de marca: TAT arriba · ARA abajo
+   Móvil: 3 columnas (1fr auto 1fr), la marca siempre centrada.
+   Escritorio: las 4 columnas de la página (ver DESKTOP, al final).
+   ============================================================ */
+.bar {
+  position: fixed;
+  left: 0; right: 0;
+  z-index: 30;
+  height: var(--bar-h);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 var(--gutter);   /* mismo margen que el contenido: todo alineado al borde */
+  background: var(--bg);
+}
+.bar--top { top: 0; }
+.bar--bottom { bottom: 0; }
+
+.bar__menu { grid-column: 1; justify-self: start; }
+
+/* Móvil: TAT ARA entero en el header y el centro del footer vacío.
+   Escritorio: TAT en el header y ARA en el footer (ver DESKTOP). */
+.bar__brand {
+  grid-column: 2;
+  justify-self: center;
+  display: flex;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--brand);
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bar__ara { margin-left: 0.55em; }                 /* el aire entre TAT y ARA */
+.bar--bottom .bar__brand { display: none; }
+
+/* Bienvenida (móvil): TAT ARA sale abajo, donde iría el footer, y sube entero
+   hasta su barra a medida que carga, como una barra de progreso. Hasta que
+   llega no se ve nada más. En escritorio salen del centro (ver DESKTOP). */
+.bar--top .bar__brand { transform: translateY(calc(var(--intro) * (var(--screen-h) - 2 * var(--brand-c)))); }
+.intro #view, .intro .menu, .intro .bar > :not(.bar__brand) { opacity: 0; }
+.bar > :not(.bar__brand) { transition: opacity var(--fade) ease; }
+
+/* Carrito: única acción del extremo derecho del header. */
+.bar__cart { grid-column: 3; justify-self: end; display: inline-flex; align-items: center; gap: 0.15rem; }
+.bar__cart-icon { height: 42px; width: auto; display: block; }
+
+/* Footer: sección actual (izq, discreta, abre el menú) e idioma activo (der,
+   un botón que abre el modal de idioma). */
+.bar__section { grid-column: 1; justify-self: start; }
+/* Móvil: solo el idioma activo (botón → modal). Desde 560px: CAT CAST ENG. */
+.bar__langbox { grid-column: 3; justify-self: end; }
+.bar__langs { display: none; gap: 0.7rem; }
+
+@media (min-width: 560px) {
+  .bar__langbox .bar__lang { display: none; }
+  .bar__langbox .bar__langs { display: flex; }
+}
+
+
+/* ============================================================
+   MENÚ — en móvil, capa con fundido (como el cambio de vista);
+   en escritorio, la columna 1 (ver DESKTOP)
+   ============================================================ */
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--bg);
+  padding: 0 var(--gutter) var(--bar-h);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fade) ease,
+              visibility 0s linear var(--fade);
+}
+.menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--fade) ease,
+              visibility 0s;
+}
+
+/* La cabecera del menú ocupa lo mismo que la barra: "MENÚ" queda justo donde
+   estaba el botón que lo abre. */
+.menu__head { display: flex; align-items: center; justify-content: space-between; height: var(--bar-h); }
+.menu__close { line-height: 0; padding: 0.2rem; margin: -0.2rem; }
+
+.menu__list { list-style: none; margin: 1.4rem 0 0; padding: 0; }
+.menu__list a { display: inline-block; padding: 0.55rem 0; }   /* en móvil, que se pueda tocar con el dedo */
+
+/* El subrayado del menú se dibuja de izquierda a derecha al pasar por encima, y
+   se queda puesto en la sección activa. No es text-decoration (no se puede
+   animar): es una línea de 1px de fondo cuyo ancho va de 0 a 100%. */
+.menu__list a {
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat content-box;
+  transition: background-size 0.3s ease;
+}
+.menu__list a:hover, .menu__list a:focus-visible, .menu__list a.is-active {
+  text-decoration: none;
+  background-size: 100% 1px;
+}
+
+/* Selector d'idioma dins del menú: baix-esquerra */
+.menu__langs { margin-top: auto; display: flex; gap: 1.4rem; }
+
+/* ============================================================
+   MODAL (ficha de producto)
+   ============================================================ */
+.modal { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; }
+.modal[hidden] { display: none; }
+.modal__backdrop { position: absolute; inset: 0; background: var(--backdrop); }
+.modal__dialog {
+  position: relative; z-index: 1;
+  width: min(560px, 92vw);
+  max-height: 86dvh; overflow: auto;
+  background: var(--bg);
+  border: 1px solid var(--ink);
+  padding: clamp(1.2rem, 5vw, 2rem);
+}
+.modal__close { position: absolute; top: 0.5rem; right: 0.6rem; line-height: 0; }
+.modal__body img { width: 100%; height: auto; margin-bottom: 1rem; }
+.modal__body .m-when { margin: 0; }
+.modal__body .m-title { margin: 0.4rem 0 0.2rem; }
+.modal__body .m-person { margin: 0 0 1rem; }
+.modal__body .m-desc { margin: 0 0 1rem; }
+.modal__body .m-price { margin: 1rem 0 0.6rem; }
+.m-buy { border: 1px solid var(--ink); padding: 0.6rem 1rem; width: 100%; background: none; }
+.m-buy:not(:disabled):hover { background: var(--ink); color: var(--bg); }
+.m-buy:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ============================================================
+   MODAL D'IDIOMA  (des del botó del footer)
+   ============================================================ */
+.langmodal { position: fixed; inset: 0; z-index: 70; display: none; place-items: center; }
+.langmodal.is-open { display: grid; }
+.langmodal__backdrop { position: absolute; inset: 0; background: var(--backdrop); }
+.langmodal__dialog { position: relative; z-index: 1; background: var(--bg); border: 1px solid var(--ink); padding: 1.6rem 2.4rem; }
+.langmodal__list { display: flex; flex-direction: column; gap: 0.9rem; }
+.langmodal__list button { text-align: center; }
+
+/* ============================================================
+   DESKTOP
+   ============================================================ */
+/* ESCRITORIO: rejilla de 4 columnas iguales entre márgenes de --gutter.
+   Columna 1: el menú, siempre a la vista. Columnas 2-3: el contenido, con TAT
+   arriba y ARA abajo repartidas a su ancho. Columna 4: carret arriba, idiomas
+   abajo. Las barras son transparentes: el contenido pasa por debajo del logo.
+   El ancho de la columna central es siempre 50% del espacio entre márgenes, así
+   las barras (fijas) y #view (en flujo) coinciden al píxel con o sin scrollbar. */
+@media (min-width: 720px) {
+  :root {
+    --gutter: 40px;
+    /* columna central = (100vw - 80px) / 2; 72 caracteres de 0,6em → /86,4.
+       Suelo de 12px (tablet: la línea se acorta) y techo de 20px (pantallas de
+       más de 1800px: la línea se alarga un poco en vez de crecer la letra). */
+    --fs: clamp(12px, 1.16vw - 1px, 20px);
+    --brand: 3.3rem;
+    --bar-h: calc(var(--gutter) + var(--brand) + 2.4rem);
+    --brand-c: calc(var(--gutter) + var(--brand) / 2);
+  }
+
+  .agenda__strip, .page > * { width: 50%; max-width: none; margin-inline: auto; }
+
+  .bar {
+    grid-template-columns: repeat(4, 1fr);
+    background: none;
+    pointer-events: none;          /* que no tape el contenido que pasa por debajo */
+  }
+  .bar > * { pointer-events: auto; }
+  /* Modo diferencia: TAT ARA (y el resto de las barras) se ve negro sobre
+     blanco, y al pasar por encima de una foto o del texto invierte lo que tiene
+     debajo. Mezcla la barra entera porque es ella (fixed) la que crea el
+     contexto de apilamiento: un hijo solo se mezclaría con la barra vacía. Para
+     que la diferencia dé negro sobre blanco, la tinta de la barra es blanca, y
+     el carrito (un png negro) se invierte. Solo en escritorio: en móvil las
+     barras son opacas y no pasa nada por debajo. */
+  .bar { mix-blend-mode: difference; color: var(--bg, #ffffff); }
+  .bar__cart-icon { filter: invert(1); }
+  .bar--top { align-items: start; padding-top: var(--gutter); }
+  .bar--bottom { align-items: end; padding-bottom: var(--gutter); }
+
+  .bar__menu { visibility: hidden; }   /* el menú ya está a la vista */
+  .bar__section { pointer-events: none; }   /* abajo solo dice dónde estás: ya no abre nada */
+  .bar__brand {   /* repartidas a lo ancho de las dos columnas centrales */
+    grid-column: 2 / 4;
+    justify-self: stretch;
+    justify-content: space-between;
+    letter-spacing: 0;
+  }
+  .bar__ara { display: none; }                      /* el ARA de arriba solo es de móvil */
+  .bar--bottom .bar__brand { display: flex; }
+  /* Bienvenida: TAT con el pie y ARA con la cabeza en el centro de la pantalla,
+     y se separan hasta su barra. */
+  .bar--top .bar__brand { transform: translateY(calc(var(--intro) * (var(--screen-h) / 2 - var(--brand-c) - 0.5em))); }
+  .bar--bottom .bar__brand { transform: translateY(calc(var(--intro) * (var(--brand-c) + 0.5em - var(--screen-h) / 2))); }
+  .bar__cart, .bar__langbox { grid-column: 4; }
+
+  /* El menú deja de ser una capa: es la columna 1, fija. */
+  .menu {
+    inset: var(--gutter) auto auto var(--gutter);
+    width: calc((100% - 2 * var(--gutter)) / 4);
+    padding: 0;
+    background: none;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--fade) ease;   /* solo para aparecer tras la bienvenida */
+    z-index: 40;
+  }
+  .menu__head, .menu__langs { display: none; }
+  .menu__list { margin: 0; }
+  .menu__list a { padding: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu, #view, .menu__list a { transition: none; }
+}

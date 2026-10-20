@@ -1,0 +1,117 @@
+# Publicar en tatara.cat
+#
+# Cada cambio que llega a main se revisa (npm run check) y, si está bien, se
+# sube a Pangea por SFTP. Si un JSON está roto, no se publica nada.
+#
+# Necesita un secret del repositorio: SFTP_PASSWORD (Settings → Secrets and
+# variables → Actions). Sin él, revisa y prepara dist/, pero no sube nada.
+# Detalle en DESARROLLO.md, "Publicación automática".
+
+name: Publicar en tatara.cat
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md']   # cambiar documentación no publica nada
+  workflow_dispatch:          # botón "Run workflow" para publicar a mano
+
+concurrency:
+  group: publicar             # nunca dos subidas a la vez
+  cancel-in-progress: false
+
+permissions:
+  contents: write             # para mover la etiqueta 'publicado'
+  issues: write               # el aviso de una publicación que falla (abajo)
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0      # hace falta la etiqueta 'publicado'
+          fetch-tags: true
+
+      # Node 22+ para el pre-render (usa WebSocket). Chrome y php ya vienen en
+      # la imagen de ubuntu de GitHub.
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      # Lo que dicen la revisión y el build va también a build.log: si algo
+      # falla, sale en un issue.
+      - name: Revisar los JSON
+        run: node tools/check-data.mjs 2>&1 | tee build.log
+        shell: bash
+
+      # También comprueba que en el servidor no haya cambios que no estén en
+      # GitHub (alguien que subió un JSON por SFTP). Si los hay, para. Y
+      # pre-renderiza una página por dirección (tools/prerender.mjs).
+      - name: Preparar dist/
+        run: bash tools/build-pangea.sh 2>&1 | tee -a build.log
+        shell: bash
+
+      - name: Subir a Pangea
+        env:
+          LFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+        run: |
+          if [ -z "$LFTP_PASSWORD" ]; then
+            echo "::notice::Falta el secret SFTP_PASSWORD: revisado y preparado, pero no se publica."
+            exit 0
+          fi
+          sudo apt-get install -y -qq lftp >/dev/null
+          # La clave del servidor, fijada: si no es esta, no se sube nada.
+          # (ED25519 SHA256:iePOeIV5BCyI4Q7fG9hrAfIPfjxz3scdQTpyysr2GYs)
+          mkdir -p ~/.ssh
+          echo "web-12.pangea.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA9TPoIqxI1p0LUiaz5IibCy+rYXyQppUV8TI70IkMsQ" >> ~/.ssh/known_hosts
+          # Sube lo que ha cambiado y no borra nada del servidor: api/config.php
+          # (que no está en dist/) se queda donde está.
+          lftp --env-password -u tatara-web sftp://web-12.pangea.org -e "
+            set net:max-retries 2; set net:timeout 30;
+            mirror --reverse --verbose --parallel=4 dist /tatara;
+            rm -r -f /tatara/assets/img/expos /tatara/assets/pdf;
+            bye"
+          # Esa línea de rm: lo viejo de antes de 'una carpeta por exposición'
+          # (2026-10-15). Las direcciones de los PDF siguen redirigiendo (.htaccess).
+          # Si ya no están, no hace nada; se puede quitar cuando se quiera.
+          echo "PUBLICADO=1" >> "$GITHUB_ENV"
+
+      - name: Comprobar
+        if: env.PUBLICADO == '1'
+        run: curl -fsS https://tatara.cat/api/health
+
+      - name: Marcar lo publicado
+        if: env.PUBLICADO == '1'
+        run: |
+          git tag -f publicado
+          git push -f origin publicado
+
+      # Si algo falla, un issue con el error, para verlo al entrar al repo (uno
+      # abierto a la vez; los siguientes fallos, como comentarios). Se cierra
+      # solo cuando vuelve a publicarse. Cómo arreglarlo: CLAUDE.md.
+      - name: Avisar del error en un issue
+        if: failure()
+        continue-on-error: true   # el aviso nunca impide publicar
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REGISTRO: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          GUIA: ${{ github.server_url }}/${{ github.repository }}/blob/main/CLAUDE.md
+        run: |
+          errores=$(grep -E -A2 '✗' build.log 2>/dev/null || echo 'Ha fallado al subir a Pangea o al comprobarlo: mira el registro.')
+          cuerpo=$(printf 'El push %s no se ha publicado: la web sigue como estaba.\n\n```\n%s\n```\n\n[El registro entero](%s) · [cómo arreglarlo](%s) ("Si no se publica")' "${GITHUB_SHA::7}" "$errores" "$REGISTRO" "$GUIA")
+          n=$(gh issue list --state open --label build --json number -q '.[0].number')
+          if [ -n "$n" ]; then gh issue comment "$n" --body "$cuerpo"
+          else
+            gh label create build --color B60205 --description 'la web no se ha publicado' --force
+            gh issue create --title 'La web no se ha publicado' --label build --body "$cuerpo"
+          fi
+      - name: Cerrar el aviso, si lo hay
+        if: success() && env.PUBLICADO == '1'
+        continue-on-error: true   # el aviso nunca impide publicar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --state open --label build --json number -q '.[].number'); do
+            gh issue close "$n" --comment "Arreglado: ${GITHUB_SHA::7} ya está publicado."
+          done

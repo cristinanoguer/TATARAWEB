@@ -1,0 +1,48 @@
+-- Tablas de TAT ARA en la D1 compartida `shop` (convención: prefijo por tienda).
+-- quienNoCorre usa las tablas sin prefijo; tatara usa tatara_*.
+-- Aplicar:  npx wrangler d1 execute shop --remote --file=schema-tatara.sql
+
+CREATE TABLE IF NOT EXISTS tatara_stock (
+  producto_id TEXT NOT NULL,
+  talla       TEXT NOT NULL DEFAULT '_',
+  cantidad    INTEGER NOT NULL DEFAULT 0 CHECK (cantidad >= 0),
+  PRIMARY KEY (producto_id, talla)
+);
+
+-- El registro del stock: una línea cada vez que cambia (ver schema-tatara.mysql.sql).
+CREATE TABLE IF NOT EXISTS tatara_stock_mov (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  producto_id TEXT NOT NULL,
+  talla       TEXT NOT NULL DEFAULT '_',
+  cambio      INTEGER NOT NULL,   -- +20 entran, -1 se vende
+  motivo      TEXT NOT NULL,      -- inicial | entrada | salida | ajuste | venta
+  nota        TEXT,
+  pedido_id   TEXT,
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS tatara_pedidos (
+  id                 TEXT PRIMARY KEY,
+  stripe_session_id  TEXT UNIQUE,
+  email              TEXT,
+  amount_total       INTEGER,       -- céntimos
+  currency           TEXT,
+  items              TEXT NOT NULL, -- JSON: [{id, nombre, precio, cantidad}]
+  zona               TEXT,          -- zona de envío elegida (envios.json)
+  envio              TEXT,          -- JSON: {zona, nombre, direccion, telefono} (de Stripe)
+  estado             TEXT NOT NULL DEFAULT 'pendiente', -- pendiente | enviado | entregado | cancelado
+  created_at         TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS tatara_newsletter (
+  email       TEXT PRIMARY KEY,
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS tatara_mensajes (
+  id          TEXT PRIMARY KEY,
+  nombre      TEXT,
+  email       TEXT,
+  texto       TEXT NOT NULL,
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);

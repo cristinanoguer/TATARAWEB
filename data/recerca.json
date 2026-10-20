@@ -1,0 +1,121 @@
+{
+  "$schema": "../schema/text.json",
+  "_comment": "Seccion Recerca. Misma estructura que nosaltres.json (type 'text' en site.json → menu): 'body' es una lista de bloques y cada uno admite heading, link (id de seccion), text (con enlaces [etiqueta](id-de-seccion)), image (una), images[] (varias, se pintan como galeria y se amplian al hacer clic) o people[] (una lista de {name, link} que se pinta en linea separada por comas; el nombre se enlaza cuando 'link' no es null). Fuente: apartado RECERCA de 'web tatara-TEXT-SETEMBRE.docx'. Las fichas con bio de cada persona vivian aqui antes; ahora la seccion es texto + noms + fotos, tal como el documento.",
+  "title": {
+    "ca": "Recerca",
+    "es": "Investigación",
+    "en": "Research"
+  },
+  "body": [
+    {
+      "text": {
+        "ca": "Com aprenem? Com ens arriba el coneixement que constantment ens envolta, però sovint no ens travessa?",
+        "es": "¿Cómo aprendemos? ¿Cómo nos llega el conocimiento que nos rodea constantemente, pero que a menudo no nos atraviesa?",
+        "en": "How do we learn? How does the knowledge that constantly surrounds us reach us, yet so often fail to permeate us?"
+      }
+    },
+    {
+      "text": {
+        "ca": "Des de TAT ARA explorem com la intersecció de les pràctiques de l’art, el disseny i l’ecologia creen coneixement a través de l’experimentació i la recerca. Algunes de les eines que explorem són recerca de camp, recol·lecta, converses, la intuïció, l’activació del cos, sessions d’escolta, debats, sessions energètiques, lectures i grups de treball. Així d’una manera orgànica i col·lectiva explorem com s’obren espais de pensament i reflexió que es transformen amb connexions de coneixement efectives.",
+        "es": "Desde TAT ARA exploramos cómo la intersección entre las prácticas del arte, el diseño y la ecología genera conocimiento mediante la experimentación y la investigación. Algunas de las herramientas que exploramos son la investigación de campo, la recolección, las conversaciones, la intuición, la activación corporal, las sesiones de escucha, los debates, las sesiones energéticas, las lecturas y los grupos de trabajo. De este modo, de forma orgánica y colectiva, exploramos cómo se abren espacios de pensamiento y reflexión que se transforman mediante conexiones efectivas entre distintos saberes.",
+        "en": "At TAT ARA, we explore how the intersection of practices in art, design, and ecology generates knowledge through experimentation and research. The tools we explore include field research, gathering, conversations, intuition, bodily activation, listening sessions, debates, energy sessions, readings, and working groups. In this organic and collective process, we explore how spaces for thought and reflection emerge and are transformed through meaningful connections between different forms of knowledge."
+      }
+    },
+    {
+      "text": {
+        "ca": "Periòdicament anirem fent publicacions sobre els resultats.",
+        "es": "Periódicamente iremos publicando los resultados.",
+        "en": "We will periodically publish the outcomes."
+      }
+    },
+    {
+      "text": {
+        "ca": "Amb:",
+        "es": "Con:",
+        "en": "With:"
+      },
+      "people": [
+        {
+          "name": "Inés Sistiaga",
+          "link": null
+        },
+        {
+          "name": "Mireia López",
+          "link": null
+        },
+        {
+          "name": "Ale Carrero",
+          "link": null
+        },
+        {
+          "name": "Sol Prado",
+          "link": null
+        },
+        {
+          "name": "Mati Cini",
+          "link": null
+        },
+        {
+          "name": "Tornen les Esquelles",
+          "link": null
+        },
+        {
+          "name": "Vinik Juré",
+          "link": "https://www.expresiones.bio/"
+        },
+        {
+          "name": "DU-DA",
+          "link": "https://du-da.net/2574-2/"
+        },
+        {
+          "name": "Raquel Buj",
+          "link": "https://www.buj.studio/"
+        },
+        {
+          "name": "Maria Roy Deulofeu",
+          "link": null
+        },
+        {
+          "name": "Solange Dalannais",
+          "link": "http://www.solangedalannais.com/"
+        },
+        {
+          "name": "Tasio Ranz",
+          "link": null
+        },
+        {
+          "name": "Trazo Continuo",
+          "link": null
+        }
+      ]
+    },
+    {
+      "images": [
+        "assets/img/recerca/00-tatara-research.webp",
+        "assets/img/recerca/01-tatara-research.webp",
+        "assets/img/recerca/02-tatara-research-sd.webp",
+        "assets/img/recerca/03-tatara-research.webp",
+        "assets/img/recerca/04-tatara-research.webp",
+        "assets/img/recerca/05-tatara-research.webp",
+        "assets/img/recerca/07-tatara-research-nataliasourdis55.webp",
+        "assets/img/recerca/08-tatara-research-nataliasourdis58.webp",
+        "assets/img/recerca/09-tatara-research-nataliasourdis74.webp",
+        "assets/img/recerca/10-tatara-research-nataliasourdis96.webp",
+        "assets/img/recerca/11-tatara-research-jpg.webp",
+        "assets/img/recerca/11-tatara-research.webp",
+        "assets/img/recerca/12-tatara-research-mrd.webp",
+        "assets/img/recerca/13-tatara-research.webp",
+        "assets/img/recerca/14-tatara-research-tle.webp",
+        "assets/img/recerca/15-tatara-research-tle.webp",
+        "assets/img/recerca/16-tatara-research-tornenlesesquelles.webp",
+        "assets/img/recerca/17-tatara-vinikjure-research.webp",
+        "assets/img/recerca/18-tatara-reserach-alecarrero.webp"
+      ],
+      "alt": {
+        "ca": "Sessió de recerca a TAT ARA",
+        "es": "Sesión de investigación en TAT ARA",
+        "en": "Research session at TAT ARA"
+      }
+    }
+  ]
+}

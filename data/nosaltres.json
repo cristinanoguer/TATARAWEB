@@ -1,0 +1,70 @@
+{
+  "$schema": "../schema/text.json",
+  "_comment": "Página NOSALTRES. Cada bloque de 'body' admite: heading (título), link (id de sección de site.json → menu → el título se vuelve enlace), text (párrafo) e image. Dentro de 'text' se pueden poner enlaces internos con la sintaxis [etiqueta](id-de-seccion). Ids válidos: agenda, nosaltres, artistes (=exposicions), diari (=recerca), botiga, contacte, newsletter. Si el id no existe, el enlace se muestra como texto normal.",
+  "title": {
+    "ca": "Nosaltres",
+    "es": "Nosotres",
+    "en": "Us"
+  },
+  "body": [
+    {
+      "text": {
+        "ca": "TAT ARA és una associació sense ànims de lucre a Barcelona. Un espai galeria que visibilitza i connecta projectes d'art, disseny i ecologia. Acull propostes crítiques, experimentals i d'investigació. Un espai cultural obert al públic per exposició, producció, lectura, debat, escolta, conversa, i investigació.",
+        "es": "TAT ARA es una asociación sin ánimo de lucro en Barcelona. Un espacio galería que visibiliza y conecta proyectos de arte, diseño y ecología. Acoge propuestas críticas, experimentales y de investigación. Un espacio cultural abierto al público para exposición, producción, lectura, debate, escucha, conversación, e investigación.",
+        "en": "TAT ARA is a non-profit association in Barcelona: a gallery space that gives visibility to and connects projects across art, design, and ecology. It supports critical, experimental, and research-based practices. Open to the public, it is a cultural space for exhibition, production, reading, debate, listening, conversation, and research."
+      }
+    },
+    {
+      "heading": {
+        "ca": "Exposicions",
+        "es": "Exposiciones",
+        "en": "Exhibitions"
+      },
+      "link": "exposicions",
+      "text": {
+        "ca": "Un espai de mostra per assajar i trobar afinitats, similituds i friccions. Un espai on buscar mirades còmplices des d'on es generen diàlegs de pensament sensible i crític. La galeria com a espai d'investigació on es creuen desig i crítica. Un espai en constant transformació. Podeu consultar totes les artistes, dissenyadores i pensadores que s'han vinculat amb l'espai a [exposicions](exposicions).",
+        "es": "Un espacio de muestra para ensayar y encontrar afinidades, similitudes y fricciones. Un espacio donde buscar miradas cómplices desde donde se generan diálogos de pensamiento sensible y crítico. La galería como espacio de investigación donde se cruzan deseo y crítica. Un espacio en constante transformación. Podéis consultar todas las artistas, diseñadoras y pensadoras que se han vinculado con el espacio en [exposiciones](exposicions).",
+        "en": "A space in which to experiment and discover affinities, similarities, and frictions. A place to seek out kindred perspectives from which sensitive and critical dialogues can emerge. The gallery as a space for research where desire and critique intersect. A space in constant transformation. You can discover all the artists, designers, and thinkers who have been involved with the space in the [Exhibitions](exposicions) section."
+      }
+    },
+    {
+      "heading": {
+        "ca": "Recerca",
+        "es": "Investigación",
+        "en": "Research"
+      },
+      "link": "recerca",
+      "text": {
+        "ca": "Com aprenem? Com ens arriba el coneixement que constantment ens envolta, però sovint no ens travessa? Proposem explorar maneres d'aprendre i compartir coneixements. A través de tallers, lectures, converses, sessions d'escoltes, debats, sessions energètiques, grups de treball, consultoria i acompanyaments per trobar les eines de reflexió, transformació i connexió afectives. Podeu consultar les persones implicades i els temes explorats a l'apartat [recerca](recerca).",
+        "es": "¿Cómo aprendemos? ¿Cómo nos llega el conocimiento que constantemente nos rodea, pero a menudo no nos atraviesa? Proponemos explorar maneras de aprender y compartir conocimientos. A través de talleres, lecturas, conversaciones, sesiones de escucha, debates, sesiones energéticas, grupos de trabajo, consultoría y acompañamientos para encontrar las herramientas de reflexión, transformación y conexión afectivas. Podéis consultar las personas implicadas y los temas explorados en el apartado [investigación](recerca).",
+        "en": "How do we learn? How does the knowledge that constantly surrounds us reach us, yet so often fail to affect us? We explore different ways of learning and sharing knowledge. Through workshops, readings, conversations, listening sessions, debates, energy sessions, working groups, consultancy, and mentoring, we seek tools for reflection, transformation, and affective connection. You can discover the people involved and the subjects explored in the [Research](recerca) section."
+      }
+    },
+    {
+      "heading": {
+        "ca": "Edicions",
+        "es": "Ediciones",
+        "en": "Editions"
+      },
+      "link": "botiga",
+      "text": {
+        "ca": "Produccions amb artistes i col·laboradores per generar economia que permeti sostenir les pràctiques artístiques i crítiques. I una petita llibreria amb una selecció de publicacions d'art, disseny i ecologia. Les peces i publicacions les trobareu a la [botiga](botiga).",
+        "es": "Producciones con artistas y colaboradoras para generar economía que permita sostener las prácticas artísticas y críticas. Y una pequeña librería con una selección de publicaciones de arte, diseño y ecología. Las piezas y publicaciones las encontraréis en la [tienda](botiga).",
+        "en": "Collaborative productions with artists and other contributors, creating an economy that helps sustain artistic and critical practices. And a small bookshop with a selection of publications on art, design, and ecology. The pieces and publications are available in the [Shop](botiga)."
+      }
+    },
+    {
+      "heading": {
+        "ca": "Col·labora",
+        "es": "Colabora",
+        "en": "Collaborators"
+      },
+      "image": "assets/img/nosaltres/generalitat-cultura.jpg",
+      "alt": {
+        "ca": "Generalitat de Catalunya — Departament de Cultura",
+        "es": "Generalitat de Catalunya — Departament de Cultura",
+        "en": "Generalitat de Catalunya — Department of Culture"
+      }
+    }
+  ]
+}

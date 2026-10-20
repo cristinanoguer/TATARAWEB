@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <!-- Las direcciones relativas (css/, js/, data/, assets/) se resuelven desde la
+       raíz también en /nosaltres/ o /exposicions/anna-dot/. -->
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bienvenida (js/intro.js): se marca antes de pintar nada, para que TAT ARA
+       ya salga en el centro. Con «reducir movimiento», sin bienvenida. -->
+  <script>if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('intro');</script>
+  <!-- El sitio es negro-sobre-blanco: opt-out del modo oscuro forzado del navegador -->
+  <meta name="color-scheme" content="light">
+  <title>TAT ARA — espai galeria d'art, disseny i ecologia a Barcelona</title>
+  <meta name="description" content="TAT ARA és una associació sense ànims de lucre a Barcelona: un espai galeria que visibilitza i connecta projectes d'art, disseny i ecologia. Exposicions, recerca i edicions al Carrer Martí, 59B.">
+  <link rel="canonical" href="https://tatara.cat/">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+
+  <!-- Com es veu l'enllaç en compartir-lo (Instagram, WhatsApp, Telegram…).
+       Sense això, enganxar tatara.cat no ensenya res: només la URL pelada.
+       og:image ha de ser una adreça ABSOLUTA; les xarxes no resolen les
+       relatives. En canviar de domini, canviar-la aquí i a og:url. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="TAT ARA">
+  <meta property="og:locale" content="ca_ES">
+  <meta property="og:title" content="TAT ARA — espai galeria d'art, disseny i ecologia">
+  <meta property="og:description" content="Un espai galeria a Barcelona que visibilitza i connecta projectes d'art, disseny i ecologia. Exposicions, recerca i edicions.">
+  <meta property="og:url" content="https://tatara.cat/">
+  <meta property="og:image" content="https://tatara.cat/assets/img/og-tatara.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Dibuix axonomètric de l'espai de TAT ARA, amb l'aparador al carrer Martí.">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Precarga las dos fuentes: la del logo (TAT ARA) y la del texto -->
+  <link rel="preload" href="fonts/SuperstudioTrialTT-Bold.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="fonts/JetBrainsMono-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Dades estructurades: li diuen a Google que això és una galeria d'art amb
+       una adreça física, cosa que no pot deduir del text sol. És el que fa
+       sortir la fitxa al mapa en buscar "galeria art Barcelona". Si canvia
+       l'adreça o el correu a site.json, canviar-los també aquí. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ArtGallery",
+    "name": "TAT ARA",
+    "url": "https://tatara.cat/",
+    "image": "https://tatara.cat/assets/img/og-tatara.jpg",
+    "description": "Associació sense ànims de lucre i espai galeria que visibilitza i connecta projectes d'art, disseny i ecologia.",
+    "email": "associaciotatara@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Carrer Martí, 59B",
+      "postalCode": "08024",
+      "addressLocality": "Barcelona",
+      "addressCountry": "ES"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Barra superior fixa: menú · marca · carret.
+       Mòbil: la marca sencera "TAT ARA" va aquí i el centre del footer queda buit.
+       Escriptori (≥720px): TAT a dalt i ARA a baix, fent de marc. -->
+  <header class="bar bar--top">
+    <button class="bar__menu" id="open-menu" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu">menú</button>
+    <a class="bar__brand" id="brand-home" href="/" aria-label="TAT ARA, inici">
+      <span>T</span><span>A</span><span>T</span><span class="bar__ara">ARA</span>
+    </a>
+    <a class="bar__cart" id="cart-link" href="/carret/" aria-label="carret">
+      <img class="bar__cart-icon" src="assets/icons/carrito.png" alt="" aria-hidden="true">
+      <span class="bar__cart-count" id="cart-count" aria-hidden="true"></span>
+    </a>
+  </header>
+
+  <!-- Vista activa (la rellena el router según el hash) -->
+  <main id="view" aria-live="polite">
+    <p class="loading">carregant…</p>
+  </main>
+
+  <!-- Barra inferior fija: secció · ARA · idioma (mòbil: actiu→modal; des de 560px: CAT CAST ENG) -->
+  <footer class="bar bar--bottom">
+    <button class="bar__section" id="bar-section" type="button" aria-haspopup="true" aria-controls="menu"></button>
+    <span class="bar__brand" role="img" aria-label="ARA"><span>A</span><span>R</span><span>A</span></span>
+    <div class="bar__langbox">
+      <div class="bar__langs" role="group" aria-label="Idioma" id="footer-langs"><!-- escriptori: la rellena el router --></div>
+      <button class="bar__lang" id="lang-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="lang-modal" aria-label="Idioma"></button>
+    </div>
+  </footer>
+
+  <!-- Modal d'idioma -->
+  <div class="langmodal" id="lang-modal" aria-hidden="true">
+    <div class="langmodal__backdrop" data-lang-close></div>
+    <div class="langmodal__dialog" role="dialog" aria-modal="true" aria-label="Idioma">
+      <div class="langmodal__list" id="lang-list"><!-- la rellena el router --></div>
+    </div>
+  </div>
+
+  <!-- Menú: columna fixa a escriptori, capa a mòbil (només canvia el CSS) -->
+  <nav class="menu" id="menu" aria-label="Menú">
+    <div class="menu__head">
+      <span class="menu__title">menú</span>
+      <button class="menu__close" id="close-menu" type="button" aria-label="Tancar">
+        <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true">
+          <path d="M6 6 L34 34 M34 6 L6 34" fill="none" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="menu__list" id="menu-list"><!-- la rellena el router --></ul>
+
+    <div class="menu__langs" role="group" aria-label="Idioma" id="menu-langs"><!-- la rellena el router --></div>
+  </nav>
+
+  <!-- Modal de detall (fitxa de producte de la botiga) -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal__close" type="button" data-close aria-label="Tancar">
+        <svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true">
+          <path d="M6 6 L34 34 M34 6 L6 34" fill="none" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </button>
+      <div class="modal__body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
