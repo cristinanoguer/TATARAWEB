@@ -17,16 +17,14 @@ l'allotjament de [Pangea](https://pangea.org).
 
 > **Publicar** és sol: cada canvi a `main` (des de GitHub o amb `git push`) es
 > revisa i es puja a Pangea per SFTP, amb GitHub Actions. Detall a
-> [DESARROLLO.md](DESARROLLO.md#publicar-en-pangea).
+> [DESARROLLO.md](https://github.com/meowrhino/tatara/blob/main/DESARROLLO.md#publicar-en-pangea), a l'arxiu de meowrhino.
 
 ## Documents
 
 | | Per a qui | Què hi ha |
 |---|---|---|
 | [GUIA.md](GUIA.md) | TAT ARA | Com canviar textos, dates, fotos i preus des de GitHub (en català) |
-| [TRASPASO.md](TRASPASO.md) | totes dues parts | Qui té què, les claus, qui es queda el repositori i la llista del traspàs |
-| [DESARROLLO.md](DESARROLLO.md) | qui toqui el codi | Estructura, disseny, com publicar a Pangea, l'API i les proves |
-| [CLAUDE.md](CLAUDE.md) | Claude | Què fer si la web no es publica (la Action en vermell, un issue) |
+| [DESARROLLO.md](https://github.com/meowrhino/tatara/blob/main/DESARROLLO.md) | qui toqui el codi | Estructura, disseny, com publicar a Pangea, l'API i les proves (a l'arxiu de meowrhino) |
 
 ## En dues línies
 

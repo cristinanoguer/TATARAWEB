@@ -1,7 +1,7 @@
 <?php
 /**
  * Carga la configuración: api/config.php si existe (Pangea), variables de
- * entorno si no (pruebas locales con `php -S`, ver DESARROLLO.md).
+ * entorno si no (pruebas locales con `php -S`, ver DESARROLLO.md en meowrhino/tatara).
  */
 
 function cfg(): array

@@ -20,7 +20,7 @@ ORIGEN="${ORIGEN:-$(node -p "require('./data/site.json').url")}"   # el dominio,
 # publicado queda solo lo suyo, y eso se aplica (3-way) sobre el data/ actual,
 # que puede llevar cambios nuestros.
 git rev-parse -q --verify publicado >/dev/null || {
-  echo "✗ Falta la etiqueta 'publicado' (el commit que hay en el servidor). Ver DESARROLLO.md."; exit 1; }
+  echo "✗ Falta la etiqueta 'publicado' (el commit que hay en el servidor). Ver DESARROLLO.md en meowrhino/tatara."; exit 1; }
 git diff --quiet HEAD -- data/ || {
   echo "✗ data/ tiene cambios sin guardar. Haz commit antes de publicar."; exit 1; }
 
